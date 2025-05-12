@@ -51,6 +51,6 @@ def review_code_diff(diff_text: str) -> str:
     Function code:
     """
 
-    {diff_text}
-    response = model.generate_content(prompt)
+    full_prompt = f"{prompt}\n\n{diff_text}"
+    response = model.generate_content(full_prompt)
     return response.text.strip()
