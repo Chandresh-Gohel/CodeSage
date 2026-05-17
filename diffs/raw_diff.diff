@@ -1,245 +1,1141 @@
-diff --git a/README.md b/README.md
-index e02369a..5316eb2 100644
---- a/README.md
-+++ b/README.md
-@@ -93,6 +93,9 @@ In this example:
- * The review process currently only analyzes the most recent commit.
- * If the most recent commit doesn't contain any function changes, no reviews will be generated.
- * The review files are saved in the `reviews/` directory.
-+* Standards are stored as embeddings in ChromaDB
-+* Function code is used as query to retrieve relevant standards
-+* Retrieved standards are injected into the Gemini prompt
- 
- ## Project Structure
- 
 diff --git a/diffs/raw_diff.diff b/diffs/raw_diff.diff
-index a570c7f..1825852 100644
+index 1825852..cb3d855 100644
 --- a/diffs/raw_diff.diff
 +++ b/diffs/raw_diff.diff
-@@ -1,27 +1,12 @@
--diff --git a/LICENSE b/LICENSE
--new file mode 100644
--index 0000000..ca8d611
----- /dev/null
--+++ b/LICENSE
--@@ -0,0 +1,21 @@
--+MIT License
--+
--+Copyright (c) 2025 Chandresh Gohel
--+
--+Permission is hereby granted, free of charge, to any person obtaining a copy
--+of this software and associated documentation files (the "Software"), to deal
--+in the Software without restriction, including without limitation the rights
--+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
--+copies of the Software, and to permit persons to whom the Software is
--+furnished to do so, subject to the following conditions:
--+
--+The above copyright notice and this permission notice shall be included in all
--+copies or substantial portions of the Software.
--+
--+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
--+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
--+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
--+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
--+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
--+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
--+SOFTWARE.
-+diff --git a/src/standards.py b/src/standards.py
-+index 4ee4ec2..089b566 100644
-+--- a/src/standards.py
-++++ b/src/standards.py
-+@@ -2,6 +2,7 @@
-+ from chromadb.utils import embedding_functions
+@@ -1,12 +1,245 @@
++diff --git a/README.md b/README.md
++index e02369a..5316eb2 100644
++--- a/README.md
+++++ b/README.md
++@@ -93,6 +93,9 @@ In this example:
++ * The review process currently only analyzes the most recent commit.
++ * If the most recent commit doesn't contain any function changes, no reviews will be generated.
++ * The review files are saved in the `reviews/` directory.
+++* Standards are stored as embeddings in ChromaDB
+++* Function code is used as query to retrieve relevant standards
+++* Retrieved standards are injected into the Gemini prompt
 + 
-+ def get_chroma_collection():
-++    not_usifng_lable_word_forcheck = list()
-+     client = chromadb.PersistentClient(path="./chroma_db")
-+     ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-+         model_name="all-MiniLM-L6-v2"
++ ## Project Structure
++ 
++diff --git a/diffs/raw_diff.diff b/diffs/raw_diff.diff
++index a570c7f..1825852 100644
++--- a/diffs/raw_diff.diff
+++++ b/diffs/raw_diff.diff
++@@ -1,27 +1,12 @@
++-diff --git a/LICENSE b/LICENSE
++-new file mode 100644
++-index 0000000..ca8d611
++---- /dev/null
++-+++ b/LICENSE
++-@@ -0,0 +1,21 @@
++-+MIT License
++-+
++-+Copyright (c) 2025 Chandresh Gohel
++-+
++-+Permission is hereby granted, free of charge, to any person obtaining a copy
++-+of this software and associated documentation files (the "Software"), to deal
++-+in the Software without restriction, including without limitation the rights
++-+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++-+copies of the Software, and to permit persons to whom the Software is
++-+furnished to do so, subject to the following conditions:
++-+
++-+The above copyright notice and this permission notice shall be included in all
++-+copies or substantial portions of the Software.
++-+
++-+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++-+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++-+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++-+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++-+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++-+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++-+SOFTWARE.
+++diff --git a/src/standards.py b/src/standards.py
+++index 4ee4ec2..089b566 100644
+++--- a/src/standards.py
++++++ b/src/standards.py
+++@@ -2,6 +2,7 @@
+++ from chromadb.utils import embedding_functions
+++ 
+++ def get_chroma_collection():
++++    not_usifng_lable_word_forcheck = list()
+++     client = chromadb.PersistentClient(path="./chroma_db")
+++     ef = embedding_functions.SentenceTransformerEmbeddingFunction(
+++         model_name="all-MiniLM-L6-v2"
++diff --git a/requirements.txt b/requirements.txt
++index a809753..8e85b37 100644
++--- a/requirements.txt
+++++ b/requirements.txt
++@@ -1,4 +1,7 @@
++ google-generativeai
++ python-dotenv
++ gitpython
++-requests
++\ No newline at end of file
+++requests
+++chromadb
+++langchain
+++sentence-transformers
++\ No newline at end of file
++diff --git a/reviews/function_1_modified.md b/reviews/function_1_modified.md
++new file mode 100644
++index 0000000..7fee691
++--- /dev/null
+++++ b/reviews/function_1_modified.md
++@@ -0,0 +1,101 @@
+++This review is based on the provided function snippet and the retrieved coding standards. Please note that the provided function is incomplete, which limits the scope of the review in certain areas.
+++
+++---
+++
+++### Summary:
+++
+++The `get_chroma_collection` function appears to be intended for initializing a ChromaDB persistent client and an `embedding_functions.SentenceTransformerEmbeddingFunction` using a specified model. However, the function snippet is incomplete, missing the final steps of obtaining or creating a ChromaDB collection and a `return` statement. It also contains an unassigned and oddly named variable.
+++
+++---
+++
+++### Improvements:
+++
+++1.  **Clarity:**
+++    *   **Variable Naming:** The variable `not_usifng_lable_word_forcheck` is highly unclear, misspelled (`using`, `label`), and appears to be unused. It should either be removed or renamed to something descriptive and correctly spelled if it has a purpose.
+++    *   **Variable Naming (minor):** `ef` is an abbreviation for "embedding function." While commonly understood in context, `embedding_function` would be more explicit and easier to read for newcomers to the codebase.
+++    *   **Docstrings:** The function is missing a docstring. A docstring should explain what the function does, its parameters (if any), and what it returns.
+++
+++2.  **Correctness:**
+++    *   **Incompleteness:** The function is incomplete. It initializes a client and an embedding function but doesn't actually perform the logical next step of getting or creating a ChromaDB collection, nor does it have a `return` statement.
+++    *   **Unused Variable:** The variable `not_usifng_lable_word_forcheck` is initialized but never used, indicating potential dead code or a forgotten purpose.
+++
+++3.  **Efficiency:**
+++    *   **Unnecessary Operations:** The line `not_usifng_lable_word_forcheck = list()` is an unnecessary operation if the variable is not used.
+++    *   **Expensive Initialization:** Initializing `SentenceTransformerEmbeddingFunction` (and potentially downloading the model) can be a relatively expensive operation. If this function is called frequently, it could lead to performance bottlenecks. Consider caching the client and embedding function if they are meant to be singletons or reused across multiple calls.
+++
+++4.  **Security:**
+++    *   Not directly applicable to this snippet. The `path` for the persistent client is hardcoded, which might be acceptable for some applications but could be a configuration risk in others.
+++
+++5.  **Maintainability:**
+++    *   **Meaningful Names:** As mentioned under clarity, `not_usifng_lable_word_forcheck` severely impacts maintainability due to its obscurity.
+++    *   **Docstrings:** Lack of a docstring reduces maintainability as it makes it harder for others (or your future self) to understand the function's intent quickly.
+++    *   **DRY Principle (Potential):** If `chromadb.PersistentClient` and `SentenceTransformerEmbeddingFunction` are initialized in multiple places, this function helps encapsulate that logic, adhering to DRY. However, without more context, it's hard to fully assess.
+++
+++6.  **Python Best Practices:**
+++    *   **PEP 8 - Indentation:** The line `not_usifng_lable_word_forcheck = list()` has 5 spaces of indentation, violating the PEP 8 standard of 4 spaces.
+++    *   **PEP 8 - Snake Case:** The variable `not_usifng_lable_word_forcheck` technically uses snake_case, but it's very poorly chosen.
+++
+++---
+++
+++### Possible Issues:
+++
+++*   **Runtime Error/Unexpected Behavior:** Due to the incomplete nature (missing `return` statement) and potentially unused variable, the function as written would likely not work as intended or could lead to `None` being returned implicitly.
+++*   **Performance Overhead:** Repeatedly initializing `SentenceTransformerEmbeddingFunction` can significantly impact application performance if not managed properly (e.g., through caching).
+++*   **Code Clarity and Debugging Difficulty:** The ambiguous variable name `not_usifng_lable_word_forcheck` makes the code harder to understand and debug.
+++*   **Misleading State:** If `not_usifng_lable_word_forcheck` was intended for something, its current state (initialized and unused) is misleading.
+++
+++---
+++
+++### Code Suggestions:
+++
+++Assuming the intent is to initialize the ChromaDB client and embedding function, and then obtain a collection, here's an improved version. I've also added necessary imports which were implicitly missing.
+++
+++```python
+++import chromadb
+++from chromadb.utils import embedding_functions
+++
+++# Consider defining constants at module level if used in multiple places
+++CHROMA_DB_PATH = "./chroma_db"
+++EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
+++
+++def get_chroma_collection(
+++    collection_name: str,
+++    db_path: str = CHROMA_DB_PATH,
+++    model_name: str = EMBEDDING_MODEL_NAME
+++):
+++    """
+++    Initializes a ChromaDB persistent client, an embedding function,
+++    and retrieves/creates a specified ChromaDB collection.
+++
+++    Args:
+++        collection_name (str): The name of the ChromaDB collection to retrieve or create.
+++        db_path (str): The path to the ChromaDB persistent storage.
+++                       Defaults to CHROMA_DB_PATH.
+++        model_name (str): The name of the SentenceTransformer model to use for embeddings.
+++                          Defaults to EMBEDDING_MODEL_NAME.
+++
+++    Returns:
+++        chromadb.api.models.Collection.Collection: The ChromaDB collection object.
+++    """
+++    # PEP 8: Indentation fixed to 4 spaces
+++    # Maintainability: Removed unused and misspelled variable.
+++    # Efficiency: Removed unnecessary operation.
+++
+++    client = chromadb.PersistentClient(path=db_path)
+++
+++    # Clarity: Changed 'ef' to 'embedding_function' for better readability.
+++    embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
+++        model_name=model_name
+++    )
+++
+++    # Assuming the goal is to get or create a collection
+++    collection = client.get_or_create_collection(
+++        name=collection_name,
+++        embedding_function=embedding_function
+++    )
+++
+++    return collection
+++
+++# Example of how to use it:
+++# my_collection = get_chroma_collection("my_documents")
+++```
++\ No newline at end of file
++diff --git a/src/__pycache__/llm_review.cpython-310.pyc b/src/__pycache__/llm_review.cpython-310.pyc
++index 3d5cab2..a736098 100644
++Binary files a/src/__pycache__/llm_review.cpython-310.pyc and b/src/__pycache__/llm_review.cpython-310.pyc differ
++diff --git a/src/__pycache__/standards.cpython-310.pyc b/src/__pycache__/standards.cpython-310.pyc
++index 4c5ce4f..b44943d 100644
++Binary files a/src/__pycache__/standards.cpython-310.pyc and b/src/__pycache__/standards.cpython-310.pyc differ
++diff --git a/src/chroma_db/chroma.sqlite3 b/src/chroma_db/chroma.sqlite3
++new file mode 100644
++index 0000000..eb63b70
++Binary files /dev/null and b/src/chroma_db/chroma.sqlite3 differ
++diff --git a/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/data_level0.bin b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/data_level0.bin
++new file mode 100644
++index 0000000..2dbfeda
++Binary files /dev/null and b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/data_level0.bin differ
++diff --git a/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/header.bin b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/header.bin
++new file mode 100644
++index 0000000..bb54792
++Binary files /dev/null and b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/header.bin differ
++diff --git a/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/length.bin b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/length.bin
++new file mode 100644
++index 0000000..3f919fe
++Binary files /dev/null and b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/length.bin differ
++diff --git a/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/link_lists.bin b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/link_lists.bin
++new file mode 100644
++index 0000000..e69de29
++diff --git a/src/llm_review.py b/src/llm_review.py
++index 0a65b8c..e61b2bb 100644
++--- a/src/llm_review.py
+++++ b/src/llm_review.py
++@@ -34,7 +34,7 @@ def review_code_diff(diff_text: str) -> str:
++ {diff_text}
++ """
++     response = client.models.generate_content(
++-        model="gemini-2.0-flash",
+++        model="gemini-2.5-flash",
++         contents=prompt
++     )
++     return response.text.strip()
++\ No newline at end of file
++diff --git a/src/main.py b/src/main.py
++index edaf237..b3f18ee 100644
++--- a/src/main.py
+++++ b/src/main.py
++@@ -4,7 +4,7 @@
++ from llm_review import review_code_diff
++ import os
++ 
++-reviewPATH = os.path.abspath(os.path.join(os.getcwd(), "..", "CodeSage/reviews/"))
+++reviewPATH = os.path.abspath(os.path.join(os.getcwd(), "..", "reviews/"))
++ repo_url = "https://github.com/Chandresh-Gohel/codesage.git"
++ branch = "main"
++ 
+ diff --git a/src/standards.py b/src/standards.py
+-index 4ee4ec2..089b566 100644
++index 089b566..4ee4ec2 100644
+ --- a/src/standards.py
+ +++ b/src/standards.py
+-@@ -2,6 +2,7 @@
++@@ -2,7 +2,6 @@
+  from chromadb.utils import embedding_functions
+  
+  def get_chroma_collection():
+-+    not_usifng_lable_word_forcheck = list()
++-    not_usifng_lable_word_forcheck = list()
+      client = chromadb.PersistentClient(path="./chroma_db")
+      ef = embedding_functions.SentenceTransformerEmbeddingFunction(
+          model_name="all-MiniLM-L6-v2"
 diff --git a/requirements.txt b/requirements.txt
-index a809753..8e85b37 100644
+index 8e85b37..f24a677 100644
 --- a/requirements.txt
 +++ b/requirements.txt
-@@ -1,4 +1,7 @@
- google-generativeai
- python-dotenv
- gitpython
--requests
+@@ -4,4 +4,6 @@ gitpython
+ requests
+ chromadb
+ langchain
+-sentence-transformers
 \ No newline at end of file
-+requests
-+chromadb
-+langchain
 +sentence-transformers
++langchain-core
++langchain-google-genai
 \ No newline at end of file
-diff --git a/reviews/function_1_modified.md b/reviews/function_1_modified.md
-new file mode 100644
-index 0000000..7fee691
---- /dev/null
-+++ b/reviews/function_1_modified.md
-@@ -0,0 +1,101 @@
-+This review is based on the provided function snippet and the retrieved coding standards. Please note that the provided function is incomplete, which limits the scope of the review in certain areas.
+diff --git a/reviews/function_1_added.md b/reviews/function_1_added.md
+index e1eb322..5b58e3a 100644
+--- a/reviews/function_1_added.md
++++ b/reviews/function_1_added.md
+@@ -1,147 +1,5 @@
+-Okay, I will review the provided `extract_functions_from_diff` function according to the specified criteria.
++It seems the actual function code is missing from your request. The provided snippet `@@ -2,6 +2,7 @@ from chromadb.utils import embedding_functions` looks like a diff header followed by an import statement, not a function itself.
+ 
+-**Summary:**
++To perform a comprehensive review based on the criteria (clarity, correctness, efficiency, security, maintainability, Python best practices) and the specified coding standards (PEP 8, Documentation, Type hints), **please provide the full function code you would like me to review.**
+ 
+-The `extract_functions_from_diff` function aims to extract Python function definitions that have been added or modified within a given diff text.  It parses the diff, identifies function signatures (using regular expressions), and captures the function's code block along with its change type (added or modified). The extracted functions are returned as a list of dictionaries, each containing the `function_code` and `change_type`.
+-
+-**Improvements:**
+-
+-1.  **Clarity:**
+-
+-    *   **Docstring Enhancement:** The docstring could benefit from clarifying the expected format of the `diff_text`. A simple example would greatly improve usability.  Also, explicitly mention that this function extracts function definitions, not necessarily the function *calls*.
+-    *   **Variable Names:**  `current_function_lines` is slightly verbose.  `func_lines` might be more concise without sacrificing readability.
+-    *   **Comments:** The comments are generally helpful, but a brief comment explaining the purpose of the regular expressions would be useful.
+-
+-2.  **Correctness:**
+-
+-    *   **Edge Cases:**
+-        *   **Nested Functions:** The current implementation might have difficulties with nested functions.  A more robust parsing strategy would be needed to handle such cases correctly.
+-        *   **Multiline Function Signatures:**  Functions with signatures spanning multiple lines (e.g., due to type hints) might not be captured correctly by the regex.
+-        *   **Functions inside Classes:** The code doesn't explicitly handle methods inside classes. The current regex might pick up the class definition as well if it's on the same line or immediately precedes the method.
+-        *   **Empty Diff:** Should handle empty diff input gracefully, likely returning an empty list.
+-        *   **No function declaration**: Should return an empty list.
+-
+-    *   **Testing:** No test cases were provided.  Unit tests are essential to verify the function's behavior with different diff formats, edge cases, and potentially problematic input.
+-
+-3.  **Efficiency:**
+-
+-    *   **Regular Expressions:**  The regular expressions are compiled each time they are used within the loop.  Compiling them outside the loop would improve performance, especially for large diffs.
+-    *   **String Concatenation:** Building the `function_code` string by repeatedly joining lines with `'\n'.join()` is generally efficient, but for extremely large functions, using a `StringBuilder` pattern (appending to a list and joining once at the end) can be slightly faster in some cases.  However, the difference is likely negligible in most scenarios.
+-
+-4.  **Security:**
+-
+-    *   The function itself doesn't pose any direct security risks as it only parses text. However, if the extracted function code were to be executed without proper sanitization, it could lead to code injection vulnerabilities.  This is outside the scope of the function itself but is an important consideration for any downstream usage of the extracted code.
+-
+-5.  **Maintainability:**
+-
+-    *   **Regex Complexity:** The regular expressions could become more complex as the code evolves to handle more edge cases. Consider breaking them down into smaller, more manageable parts or using a dedicated parsing library if the complexity increases significantly.
+-    *   **Error Handling:** The code currently has no explicit error handling.  Consider adding `try...except` blocks to catch potential exceptions (e.g., if the diff format is unexpected).
+-
+-6.  **Python Best Practices:**
+-
+-    *   **PEP 8:** The code generally follows PEP 8 guidelines.
+-    *   **List Comprehensions:**  While not applicable in this specific case, be mindful of when list comprehensions could replace more verbose loops.
+-    *   **`any()` or `all()` functions**: In some situations, using `any()` or `all()` could make code more concise and readable. Not applicable in this function.
+-
+-**Possible Issues:**
+-
+-*   **Incorrectly Identifies Functions:** The regex might incorrectly identify lines as function definitions, especially if the diff contains code snippets that resemble function signatures.
+-*   **Incomplete Function Extraction:**  The logic for determining the end of a function block based solely on indentation can be fragile.  More sophisticated parsing techniques might be necessary for complex code structures.
+-*   **Nested Function/Class Handling:** As mentioned earlier, nested functions and functions within classes are not handled robustly.
+-*   **Multiline Signatures:** The regex doesn't handle multiline signatures well, which become common when using type hints extensively.
+-
+-**Code Suggestions:**
+-
+-```python
+-import re
+-
+-def extract_functions_from_diff(diff_text):
+-    """
+-    Extract added or modified Python functions from a diff text.
+-
+-    The function parses the diff and identifies added or modified function definitions.
+-    It captures the function's code block and its change type (added or modified).
+-
+-    Args:
+-        diff_text: The diff text as a string.  Must start with a '+' or ' ' for added/modified lines.
+-                   Example:
+-                   ```
+-                   +def my_function(a: int, b: str) -> None:
+-                   +    \"\"\"This is a function.\"\"\"
+-                   +    print(a + b)
+-                   ```
+-
+-    Returns:
+-        A list of dictionaries, where each dictionary represents a function and contains:
+-            'function_code': The function's code as a string (including the def line).
+-            'change_type': 'added' or 'modified' indicating how the function was changed.
+-        Returns an empty list if no functions are found or if the input is invalid.
+-    """
+-    functions = []
+-    func_lines = []
+-    inside_function = False
+-    change_type = None
+-
+-    # Compile regular expressions for efficiency
+-    function_def_regex = re.compile(r'^\s*def\s+\w+\s*\(.*?\)\s*:')  # Matches function definitions
+-    decorator_regex = re.compile(r'^\s*@')  # Matches decorators
+-    indentation_regex = re.compile(r'^\s+')  # Matches lines with indentation
+-
+-    diff_lines = diff_text.splitlines()
+-
+-    for line in diff_lines:
+-        # Skip deleted lines
+-        if line.startswith('-'):
+-            continue
+-
+-        # Handle added or context lines
+-        if line.startswith('+') or line.startswith(' '):
+-            code_line = line[1:] if line.startswith('+') else line  # Remove '+'
+-
+-            # Check if a function starts here (def or decorator)
+-            if function_def_regex.match(code_line) or decorator_regex.match(code_line):
+-                # Save previous function if any
+-                if func_lines:
+-                    functions.append({
+-                        'function_code': '\n'.join(func_lines),
+-                        'change_type': change_type
+-                    })
+-                    func_lines = []
+-
+-                inside_function = True
+-                change_type = "added" if line.startswith('+') else "modified"
+-                func_lines.append(code_line)
+-
+-            elif inside_function:
+-                # Collect lines inside the function
+-                if code_line.strip() == "" or indentation_regex.match(code_line):
+-                    func_lines.append(code_line)
+-                else:
+-                    # Function block ended
+-                    functions.append({
+-                        'function_code': '\n'.join(func_lines),
+-                        'change_type': change_type
+-                    })
+-                    inside_function = False
+-                    func_lines = []
+-
+-    # Catch the last function if any
+-    if func_lines:
+-        functions.append({
+-            'function_code': '\n'.join(func_lines),
+-            'change_type': change_type
+-        })
+-
+-    return functions
+-```
+-
+-**Changes in the suggested code:**
+-
+-*   **Docstring:** Improved the docstring with a better explanation and an example.
+-*   **Regex Compilation:**  Compiled the regular expressions outside the loop.
+-*   **Variable Name:** Shortened `current_function_lines` to `func_lines`.
+-*   **Regex Enhancement**: Add `.*?` in regex to match anything, so the parameters in function declaration could have multiline type hinting.
+-*   **Regex Enhancement**: Added ':' to the end of the `function_def_regex` to match more accurately function definition.
+-*   **Clarity**: Added comments.
+-
+-This revised version addresses some of the identified issues and incorporates best practices. However, remember that robust parsing of Python code, especially within diffs, is a complex task, and this function might still require further refinement to handle all possible scenarios accurately. Writing comprehensive unit tests is crucial for ensuring its correctness and reliability.
+\ No newline at end of file
++Once you provide the function, I will be happy to give you detailed feedback!
+\ No newline at end of file
+diff --git a/reviews/function_2_added.md b/reviews/function_2_added.md
+index ab4a7d7..c16011a 100644
+--- a/reviews/function_2_added.md
++++ b/reviews/function_2_added.md
+@@ -1,120 +1,89 @@
+-Okay, I'm ready to review the `extract_changed_files` function.
+-
+-**Summary**:
+-
+-The function `extract_changed_files` takes a diff text (presumably from a `git diff` command) as input and extracts the file paths of the files that have been added or modified in the diff.  It uses a regular expression to find lines indicating file changes and then extracts the file path from those lines.
+-
+-**Improvements**:
+-
+-1. **Clarity**:
+-    - The code is relatively clear, but could benefit from a more descriptive docstring explaining the expected format of the `diff_text` and the assumptions made about it.
+-    - The variable name `file_pattern` could be more descriptive (e.g., `git_diff_file_pattern`).
+-    - A comment explaining *why* the `split(' ')[2]` is used would be helpful.
+-    - Consider adding a comment about possible false positives.
+-
+-2. **Correctness**:
+-    - The regex seems reasonable for simple diffs, but it might fail in more complex scenarios (e.g., renamed files, diffs with unusual formatting).
+-    - The function doesn't handle edge cases like an empty diff text or a diff text that doesn't match the expected format.  In these cases, it will return an empty list, which might be the desired behavior, but should be explicitly documented.
+-    - No test cases are provided, making it difficult to assess correctness comprehensively.
+-    - The code assumes the file path is always the third element after splitting by spaces.  This may not always be true depending on diff formatting.
+-
+-3. **Efficiency**:
+-    - The use of `re.finditer` is generally efficient for finding multiple matches.
+-    - The `strip()` operation is good for removing any potential whitespace around the file path.
+-    - The efficiency seems acceptable for most use cases. We are not dealing with very large diffs usually.
+-
+-4. **Security**:
+-    - The function itself doesn't appear to introduce any direct security vulnerabilities.  However, it's important to consider the source of the `diff_text`. If the `diff_text` comes from an untrusted source, it could potentially be crafted to cause unexpected behavior or resource exhaustion (e.g., very large diffs).
+-    - Input validation (e.g., checking the size of the diff text) might be considered if dealing with untrusted sources.
+-
+-5. **Maintainability**:
+-    - The code is relatively short and easy to understand, which improves maintainability.
+-    - The regex is a bit opaque.  Consider adding a comment explaining the different parts of the regex.
+-    - If the regex becomes more complex, consider using a named capture group for the file path to improve readability.
+-
+-6. **Python Best Practices**:
+-    - The code generally follows PEP 8 guidelines.
+-    - No obvious Pythonic improvements needed here, the code is already concise.
+-    - Standard library usage is appropriate.
+-
+-**Possible Issues**:
+-
+-- **Regex fragility**: The regex relies on a specific format of the `diff --git` line. Any deviation from this format could cause the function to fail. Complex diffs or diffs generated by different tools could break the regex.
+-- **Lack of error handling**: The function doesn't handle cases where the regex doesn't match or the `split` operation doesn't produce the expected number of elements.  This could lead to unexpected errors or incorrect results.
+-- **No test cases**: The absence of test cases makes it difficult to verify the function's correctness and robustness.
+-
+-**Code Suggestions**:
+-
+-```python
+-import re
+-
+-def extract_changed_files(diff_text):
+-    """
+-    Extracts the file paths of changed files from a git diff text.
+-
+-    Args:
+-        diff_text: A string containing the output of a `git diff` command.
+-                     Assumes the standard `git diff` format.
+-
+-    Returns:
+-        A list of strings, where each string is the file path of a changed file.
+-        Returns an empty list if no changed files are found or if the diff text
+-        is empty.
+-    """
+-    # Regex to match file changes (added or modified) in git diff output.
+-    # This pattern looks for lines starting with "diff --git a/..."
+-    git_diff_file_pattern = r"([+-]?\s*diff --git a/.*? b/.*?)\n"
+-    files = []
+-    for match in re.finditer(git_diff_file_pattern, diff_text):
+-        diff_line = match.group(1)  # The entire diff --git line
+-        parts = diff_line.split(' ')
+-        # The file path is expected to be the third element after splitting by spaces.
+-        # Example: diff --git a/path/to/file.txt b/path/to/file.txt
+-        try:
+-            file_path = parts[2].strip()
+-            files.append(file_path)
+-        except IndexError:
+-            # Handle cases where the split doesn't produce enough elements.
+-            print(f"Warning: Unexpected diff line format: {diff_line}")
+-            continue # skip this match and continue with next one
+-
+-    return files
+-
+-# Example Usage (Test Case):
+-if __name__ == '__main__':
+-    diff_text = """
+-    diff --git a/file1.txt b/file1.txt
+-    index 1234567..89abcdef 100644
+-    --- a/file1.txt
+-    +++ b/file1.txt
+-    @@ -1,1 +1,1 @@
+-    +This is a change.
+-    diff --git a/path/to/file2.py b/path/to/file2.py
+-    index 0000000..1111111 100644
+-    --- a/path/to/file2.py
+-    +++ b/path/to/file2.py
+-    @@ -1,1 +1,1 @@
+-    +print("Hello, world!")
+-    """
+-
+-    changed_files = extract_changed_files(diff_text)
+-    print(f"Changed files: {changed_files}") #Expected output: ['a/file1.txt', 'a/path/to/file2.py']
+-
+-    empty_diff = ""
+-    print(f"Changed files for empty diff: {extract_changed_files(empty_diff)}") #Expected output: []
+-
+-    malformed_diff = "diff --git a/file3.txt"
+-    print(f"Changed files for malformed diff: {extract_changed_files(malformed_diff)}") #Will print warning and return []
+-
+-```
+-
+-Key changes in the suggested code:
+-
+-- Added a more comprehensive docstring.
+-- Improved variable name (`git_diff_file_pattern`).
+-- Added a `try-except` block to handle potential `IndexError` if the `split` operation doesn't produce enough elements.  This makes the function more robust.
+-- Added a comment explaining why `parts[2]` is being accessed.
+-- Included example usage and test cases within an `if __name__ == '__main__':` block. This demonstrates how to use the function and provides basic tests.
+-- Added a warning message to stderr if an unexpected diff line is encountered, but continuing processing. This provides better feedback.
+-
+-These changes address the identified issues related to clarity, correctness, and maintainability.  The added test cases help to verify the function's behavior in different scenarios.  The error handling makes the function more robust.
+\ No newline at end of file
++Okay, let's review the provided function `def get_chroma_collection():`.
++
++It's important to note that the function body is empty, which severely limits the scope of the review for correctness, efficiency, and security. My feedback will primarily focus on the function signature and adherence to the specified coding standards and best practices for an empty function.
 +
 +---
 +
-+### Summary:
++### Code Review: `get_chroma_collection`
 +
-+The `get_chroma_collection` function appears to be intended for initializing a ChromaDB persistent client and an `embedding_functions.SentenceTransformerEmbeddingFunction` using a specified model. However, the function snippet is incomplete, missing the final steps of obtaining or creating a ChromaDB collection and a `return` statement. It also contains an unassigned and oddly named variable.
++**Overall Assessment:**
++The function signature adheres to PEP 8 naming conventions, but critically lacks type hints and a docstring, which are mandatory as per the provided standards. The empty body prevents any assessment of its actual implementation, logic, or performance.
 +
 +---
 +
-+### Improvements:
++### Detailed Review Points:
 +
++#### 1. Adherence to Retrieved Coding Standards:
++
++*   **PEP 8:**
++    *   **Indentation:** Not applicable yet, as there is no function body.
++    *   **Max 79 chars per line:** The function signature `def get_chroma_collection():` is well within the limit.
++    *   **Snake_case for variables:** The function name `get_chroma_collection` correctly uses `snake_case`.
++    *   **Blank lines between functions:** Not applicable, as only one function is provided.
++    *   **Verdict: Mostly Compliant (for signature).**
++
++*   **Type hints:**
++    *   **Issue:** The function signature `def get_chroma_collection():` is missing a return type hint. Based on the name, it's expected to return a ChromaDB collection object.
++    *   **Recommendation:** Add a return type hint. Assuming `chromadb.api.models.Collection` is the expected return type (or similar, depending on the exact ChromaDB client used).
++    *   **Example:** `def get_chroma_collection() -> Collection:` (You would need to import `Collection` from `chromadb.api.models` or wherever it's defined).
++    *   **Verdict: Non-Compliant.**
++
++*   **Documentation:**
++    *   **Issue:** The function is completely missing a docstring. Every function must have one.
++    *   **Recommendation:** Add a comprehensive docstring explaining its purpose, what it returns, and any potential exceptions.
++    *   **Example:**
++        ```python
++        def get_chroma_collection() -> Collection:
++            """
++            Retrieves or creates a ChromaDB collection.
++
++            This function is responsible for initializing the ChromaDB client
++            and ensuring that a specific collection (e.g., 'my_collection')
++            exists. If the collection does not exist, it should be created.
++
++            Returns:
++                Collection: The ChromaDB collection object.
++
++            Raises:
++                chromadb.errors.ChromaDBError: If there's an issue connecting to ChromaDB
++                                               or interacting with the collection.
++            """
++            # ... function body ...
++        ```
++    *   **Verdict: Non-Compliant.**
++
++#### 2. General Review Aspects:
++
++*   **Clarity:**
++    *   The function name `get_chroma_collection` is clear and descriptive, indicating its intent to retrieve a Chroma collection.
++    *   **However, the lack of type hints and a docstring severely compromises clarity regarding what it *actually* returns and how it behaves.**
++    *   **Recommendation:** Implement type hints and a docstring.
++
++*   **Correctness:**
++    *   Cannot be assessed due to the empty function body.
++    *   **Recommendation:** Implement the logic to connect to ChromaDB and retrieve/create the collection.
++
++*   **Efficiency:**
++    *   Cannot be assessed due to the empty function body.
++    *   **Recommendation:** Consider potential performance implications once the body is implemented (e.g., connection pooling, caching).
++
++*   **Security:**
++    *   Cannot be assessed due to the empty function body.
++    *   **Recommendation:** If the function involves sensitive operations (e.g., API keys, network connections), ensure credentials are handled securely (environment variables, secret management), and connections are robust against failures.
++
++*   **Maintainability:**
++    *   An empty function is technically easy to maintain, but as soon as logic is added, the *current lack of type hints and documentation will significantly hurt maintainability*. Future developers (including your future self) will struggle to understand its usage without these.
++    *   **Recommendation:** Prioritize adding type hints and a docstring before implementing the core logic.
++
++*   **Python Best Practices:**
++    *   The function name follows Python conventions.
++    *   **Violates best practices regarding type hinting and documentation for production-ready code.**
++
++---
++
++### Summary and Actionable Recommendations:
++
++1.  **Add Type Hints:** Update the function signature to include a return type hint, e.g., `-> Collection`.
++2.  **Add Docstring:** Write a comprehensive docstring explaining the function's purpose, what it returns, and any exceptions it might raise.
++3.  **Implement Function Body:** Once the standards are met, proceed with implementing the actual logic to connect to ChromaDB and retrieve/create the collection.
++4.  **Consider Parameters:** If the collection name or other configuration details are not hardcoded, consider adding them as parameters with appropriate type hints. E.g., `def get_chroma_collection(collection_name: str = "default_collection", client_settings: Optional[Settings] = None) -> Collection:`.
+\ No newline at end of file
+diff --git a/reviews/function_3_added.md b/reviews/function_3_added.md
+index 5972f36..40c3a23 100644
+--- a/reviews/function_3_added.md
++++ b/reviews/function_3_added.md
+@@ -1,134 +1,110 @@
+-Okay, I will review the provided `get_git_diff` function based on the specified criteria.
++Okay, let's review this function signature based on the provided coding standards and general best practices.
+ 
+-**Summary:**
++---
+ 
+-The `get_git_diff` function retrieves the diff between the latest commit and the previous commit from a specified GitHub repository and branch. It uses the GitHub API to fetch commit information and the diff itself.
++### Code Review: `get_chroma_collection` function signature
+ 
+-**Improvements:**
++**Overall Impression:**
++The function signature is well-structured with clear parameter names and good use of default values. The application of type hints for parameters is a good start. However, there are a couple of crucial missing elements according to the coding standards, primarily the docstring and the return type hint.
+ 
+-1.  **Clarity:**
++---
+ 
+-*   The code is generally readable.
+-*   Variable names are mostly descriptive.
+-*   The docstring is helpful, but could include information about exception handling.
+-*   **Improvement**: Add comments explaining each step in more detail, especially the URL construction.
++**Detailed Review:**
+ 
+-2.  **Correctness:**
 +1.  **Clarity:**
-+    *   **Variable Naming:** The variable `not_usifng_lable_word_forcheck` is highly unclear, misspelled (`using`, `label`), and appears to be unused. It should either be removed or renamed to something descriptive and correctly spelled if it has a purpose.
-+    *   **Variable Naming (minor):** `ef` is an abbreviation for "embedding function." While commonly understood in context, `embedding_function` would be more explicit and easier to read for newcomers to the codebase.
-+    *   **Docstrings:** The function is missing a docstring. A docstring should explain what the function does, its parameters (if any), and what it returns.
-+
++    *   **Good:** The parameter names (`collection_name`, `db_path`, `model_name`) are clear and descriptive, making it easy to understand what each argument represents.
++    *   **Good:** The use of default values for `db_path` and `model_name` is good practice, simplifying common use cases while allowing flexibility.
+ 
+-*   The function appears to perform the intended task.
+-*   **Edge Cases**:
+-    *   The function checks if there are at least two commits.
+-    *   The function raises an exception if the HTTP request fails using `response.raise_for_status()`.
+-    *   The function strips ".git" from the URL. However, it does not handle URLs that do not contain ".git".
+-    *   If the branch does not exist, Github API will throw an exception, which is correctly handled.
+-*   **Improvement**: Add better handling for malformed `repo_url` inputs (e.g., using regular expressions or `urllib.parse` to validate the URL).  Consider returning `None` or an empty string instead of raising an exception if there aren't enough commits, depending on the desired behavior.
 +2.  **Correctness:**
-+    *   **Incompleteness:** The function is incomplete. It initializes a client and an embedding function but doesn't actually perform the logical next step of getting or creating a ChromaDB collection, nor does it have a `return` statement.
-+    *   **Unused Variable:** The variable `not_usifng_lable_word_forcheck` is initialized but never used, indicating potential dead code or a forgotten purpose.
-+
-+3.  **Efficiency:**
-+    *   **Unnecessary Operations:** The line `not_usifng_lable_word_forcheck = list()` is an unnecessary operation if the variable is not used.
-+    *   **Expensive Initialization:** Initializing `SentenceTransformerEmbeddingFunction` (and potentially downloading the model) can be a relatively expensive operation. If this function is called frequently, it could lead to performance bottlenecks. Consider caching the client and embedding function if they are meant to be singletons or reused across multiple calls.
-+
-+4.  **Security:**
-+    *   Not directly applicable to this snippet. The `path` for the persistent client is hardcoded, which might be acceptable for some applications but could be a configuration risk in others.
-+
-+5.  **Maintainability:**
-+    *   **Meaningful Names:** As mentioned under clarity, `not_usifng_lable_word_forcheck` severely impacts maintainability due to its obscurity.
-+    *   **Docstrings:** Lack of a docstring reduces maintainability as it makes it harder for others (or your future self) to understand the function's intent quickly.
-+    *   **DRY Principle (Potential):** If `chromadb.PersistentClient` and `SentenceTransformerEmbeddingFunction` are initialized in multiple places, this function helps encapsulate that logic, adhering to DRY. However, without more context, it's hard to fully assess.
-+
-+6.  **Python Best Practices:**
-+    *   **PEP 8 - Indentation:** The line `not_usifng_lable_word_forcheck = list()` has 5 spaces of indentation, violating the PEP 8 standard of 4 spaces.
-+    *   **PEP 8 - Snake Case:** The variable `not_usifng_lable_word_forcheck` technically uses snake_case, but it's very poorly chosen.
-+
++    *   Cannot fully assess correctness without the function body. The signature itself is syntactically correct.
++    *   **Assumption:** `CHROMA_DB_PATH` and `EMBEDDING_MODEL_NAME` are assumed to be correctly defined constants (e.g., global constants or imported from a config module).
+ 
+ 3.  **Efficiency:**
+-
+-*   The function seems reasonably efficient for its task. It only fetches the necessary data from the GitHub API.
+-*   **Improvement**: No significant efficiency improvements are apparent without further context.
++    *   Not applicable to the function signature alone.
+ 
+ 4.  **Security:**
+-
+-*   The function relies on the `repo_url` input, but it doesn't seem to directly expose any security vulnerabilities like SQL injection since it's only making HTTP requests.
+-*   **Improvement**: While not a direct vulnerability, be mindful of logging or displaying the `repo_url`.
++    *   Not applicable to the function signature alone.
+ 
+ 5.  **Maintainability:**
++    *   **Good:** Clear parameter names and type hints contribute positively to maintainability.
++    *   **Improvement Needed:** The lack of a docstring and return type hint will hinder maintainability as developers won't immediately know the function's purpose, what it returns, or potential side effects without diving into the implementation.
+ 
+-*   The code is reasonably maintainable.
+-*   It could benefit from breaking down the URL construction into smaller, named variables for increased readability.
+-*   **Improvement**:  Consider using a configuration object or environment variable for `GITHUB_API` to make it easily configurable.  Refactor the URL construction to improve readability.
++6.  **Python Best Practices & Coding Standards Compliance:**
+ 
+-6.  **Python Best Practices:**
++    *   **PEP 8:**
++        *   **Indentation (4 spaces):** Looks correct for the snippet provided.
++        *   **Max 79 chars per line:** The signature adheres to this.
++        *   **Snake_case for variables:** `collection_name`, `db_path`, `model_name` correctly use snake_case. `CHROMA_DB_PATH` and `EMBEDDING_MODEL_NAME` are uppercase, which is standard for constants.
++        *   **Blank lines between functions:** Cannot be assessed from this snippet.
++        *   **Verdict: Mostly Compliant (for the snippet provided).**
+ 
+-*   The code mostly adheres to PEP 8.
+-*   It uses `f-strings` which is a good practice.
+-*   **Improvement**: Consider using `urllib.parse` to parse the URL. This would handle a wider variety of URL formats and be more robust.
++    *   **Documentation (Docstring):**
++        *   **Requirement:** "every function must have a docstring explaining purpose, parameters, return values, and exceptions raised."
++        *   **Status: NON-COMPLIANT.** A docstring is entirely missing.
++        *   **Recommendation:** Add a comprehensive docstring immediately after the function signature.
+ 
+-**Possible Issues:**
++    *   **Type Hints:**
++        *   **Requirement:** "use Python type annotations for all function parameters and return types."
++        *   **Status: PARTIALLY COMPLIANT.** Type hints are correctly used for all parameters (`collection_name: str`, `db_path: str`, `model_name: str`). However, the **return type hint is missing**.
++        *   **Recommendation:** Add a return type hint to the function signature (e.g., `-> Any`, `-> Collection`, `-> VectorStore`, etc., depending on what ChromaDB object it returns).
+ 
+-*   **Malformed `repo_url`:**  The current URL parsing is very basic and may fail for more complex URLs.
+-*   **Missing `.git`:** The code strips `.git` from the URL but does not check if it exists.
+-*   **Error Handling**: While `response.raise_for_status()` is good, consider more specific exception handling for different HTTP error codes (e.g., 404 for repository not found, 403 for rate limiting).
+-*   **Rate Limiting:** The GitHub API is subject to rate limits. The function doesn't include any explicit handling for rate limits, which could lead to unexpected errors.  Consider adding exponential backoff or caching.
+-*   **Global Variable:** The code uses `GITHUB_API`, which appears to be a global variable.  Global variables should be avoided if possible. Inject the API URL or use a constant defined within the function's scope.
 +---
+ 
+-**Code Suggestions:**
++### Suggested Improvements & Example:
+ 
+ ```python
+-import requests
+-import urllib.parse
+-import os  # For accessing environment variables
+-
+-
+-def get_git_diff(repo_url, branch="main"):
++# Assuming these constants are defined elsewhere, e.g., in a config.py
++# CHROMA_DB_PATH = "/path/to/chroma_db"
++# EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 +
-+### Possible Issues:
-+
-+*   **Runtime Error/Unexpected Behavior:** Due to the incomplete nature (missing `return` statement) and potentially unused variable, the function as written would likely not work as intended or could lead to `None` being returned implicitly.
-+*   **Performance Overhead:** Repeatedly initializing `SentenceTransformerEmbeddingFunction` can significantly impact application performance if not managed properly (e.g., through caching).
-+*   **Code Clarity and Debugging Difficulty:** The ambiguous variable name `not_usifng_lable_word_forcheck` makes the code harder to understand and debug.
-+*   **Misleading State:** If `not_usifng_lable_word_forcheck` was intended for something, its current state (initialized and unused) is misleading.
-+
-+---
-+
-+### Code Suggestions:
-+
-+Assuming the intent is to initialize the ChromaDB client and embedding function, and then obtain a collection, here's an improved version. I've also added necessary imports which were implicitly missing.
-+
-+```python
-+import chromadb
-+from chromadb.utils import embedding_functions
-+
-+# Consider defining constants at module level if used in multiple places
-+CHROMA_DB_PATH = "./chroma_db"
-+EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
++# Example return type hint, replace 'Collection' with the actual ChromaDB return type if known
++from typing import TYPE_CHECKING
++if TYPE_CHECKING:
++    # This import is for type hinting only, avoids runtime dependency if not needed
++    from chromadb.api.models.Collection import Collection # Example, adjust as needed
 +
 +def get_chroma_collection(
 +    collection_name: str,
 +    db_path: str = CHROMA_DB_PATH,
 +    model_name: str = EMBEDDING_MODEL_NAME
-+):
-+    """
-+    Initializes a ChromaDB persistent client, an embedding function,
-+    and retrieves/creates a specified ChromaDB collection.
++) -> 'Collection': # <-- ADDED: Return type hint
+     """
+-    Fetches the diff between the latest commit and the previous one from a GitHub repository.
+-
+-    :param repo_url: GitHub repository URL, e.g., 'https://github.com/owner/repo.git'
+-    :param branch: The branch to fetch the diff from. Defaults to "main".
+-    :return: The diff as a string, or None if an error occurs.
++    Retrieves or creates a ChromaDB collection with the specified name and embedding model.
++
++    This function initializes a ChromaDB client, ensures the specified collection
++    exists, and returns a handle to it. It uses a persistent client to store
++    data at the given database path.
 +
 +    Args:
-+        collection_name (str): The name of the ChromaDB collection to retrieve or create.
-+        db_path (str): The path to the ChromaDB persistent storage.
-+                       Defaults to CHROMA_DB_PATH.
-+        model_name (str): The name of the SentenceTransformer model to use for embeddings.
-+                          Defaults to EMBEDDING_MODEL_NAME.
++        collection_name (str): The name of the collection to retrieve or create.
++                               This name must be unique within the database.
++        db_path (str, optional): The file system path where the ChromaDB will
++                                 store its data. Defaults to CHROMA_DB_PATH.
++        model_name (str, optional): The name of the embedding model to use for
++                                    the collection. Defaults to EMBEDDING_MODEL_NAME.
 +
 +    Returns:
-+        chromadb.api.models.Collection.Collection: The ChromaDB collection object.
-+    """
-+    # PEP 8: Indentation fixed to 4 spaces
-+    # Maintainability: Removed unused and misspelled variable.
-+    # Efficiency: Removed unnecessary operation.
++        Collection: An instance of a ChromaDB Collection object, ready for
++                    adding, querying, or deleting embeddings.
 +
-+    client = chromadb.PersistentClient(path=db_path)
-+
-+    # Clarity: Changed 'ef' to 'embedding_function' for better readability.
-+    embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
-+        model_name=model_name
-+    )
-+
-+    # Assuming the goal is to get or create a collection
-+    collection = client.get_or_create_collection(
-+        name=collection_name,
-+        embedding_function=embedding_function
-+    )
-+
-+    return collection
-+
-+# Example of how to use it:
-+# my_collection = get_chroma_collection("my_documents")
++    Raises:
++        ValueError: If the collection name is invalid or if there's an issue
++                    initializing the embedding function.
++        # Add other specific exceptions if the function body can raise them
+     """
+-
+-    GITHUB_API = os.environ.get("GITHUB_API_URL", "https://api.github.com") # Set default and allow override
+-
+-    try:
+-        # Parse the URL to extract owner and repo
+-        parsed_url = urllib.parse.urlparse(repo_url)
+-        path_segments = parsed_url.path.rstrip(".git").split("/")
+-        if len(path_segments) < 3: # Expecting at least /owner/repo
+-            raise ValueError("Invalid repo_url format.  Must be like https://github.com/owner/repo.git")
+-        user = path_segments[-2]
+-        repo = path_segments[-1]
+-
+-
+-        # Construct the URL for fetching commits
+-        commits_url = urllib.parse.urljoin(
+-            GITHUB_API, f"/repos/{user}/{repo}/commits?sha={branch}&per_page=2"
+-        )
+-
+-        response = requests.get(commits_url)
+-        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+-        commits = response.json()
+-
+-        if len(commits) < 2:
+-            print("Not enough commits to compute a diff.")
+-            return None
+-
+-        latest_sha = commits[0]["sha"]
+-        previous_sha = commits[1]["sha"]
+-
+-        # Construct the URL for comparing commits
+-        compare_url = urllib.parse.urljoin(
+-            GITHUB_API, f"/repos/{user}/{repo}/compare/{previous_sha}...{latest_sha}"
+-        )
+-
+-        compare_response = requests.get(
+-            compare_url, headers={"Accept": "application/vnd.github.v3.diff"}
+-        )
+-        compare_response.raise_for_status()
+-
+-        return compare_response.text
+-
+-    except requests.exceptions.RequestException as e:
+-        print(f"Request failed: {e}")
+-        return None  # Or handle the error as appropriate
+-    except ValueError as e:
+-        print(f"URL parsing error: {e}")
+-        return None # Or handle as appropriate
+-    except KeyError as e:
+-        print(f"Key error when parsing JSON: {e}")
+-        return None
+-
+-```
+-
+-**Key Changes in the Suggestion:**
+-
+-*   **`urllib.parse`:** Uses `urllib.parse` for more robust URL parsing and joining.
+-*   **Environment Variable:**  Uses `os.environ.get` to fetch the `GITHUB_API_URL` from the environment, allowing for easier configuration. If not found in the environment, it defaults to the public GitHub API endpoint.
+-*   **More Robust URL Validation**: Improved validation for the input `repo_url`.
+-*   **Error Handling**: Includes a `try...except` block to catch `requests` exceptions (e.g., network errors, invalid responses), `ValueError` exceptions (invalid URL), and `KeyError` exceptions (invalid JSON).  Returns `None` on error.
+-*   **Clearer Variable Names:** Renamed variables (e.g. `latest` to `latest_sha`) for increased clarity.
+-*   **Comments**: Added more comments.
+-*   **Returns None on insufficient commits:** Returns `None` if there aren't enough commits, instead of raising an exception. This makes it easier to handle in calling code.
+-*   **Handles various errors**: handles HTTP errors, invalid URLs, JSON errors
+\ No newline at end of file
++    # Function body would go here
++    # Example placeholder:
++    # from chromadb import PersistentClient
++    # from chromadb.utils import embedding_functions
++    #
++    # client = PersistentClient(path=db_path)
++    # embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
++    #     model_name=model_name
++    # )
++    # collection = client.get_or_create_collection(
++    #     name=collection_name,
++    #     embedding_function=embedding_function
++    # )
++    # return collection
++    pass # Placeholder for actual implementation
 +```
 \ No newline at end of file
+diff --git a/reviews/function_4_modified.md b/reviews/function_4_modified.md
+new file mode 100644
+index 0000000..2b2788a
+--- /dev/null
++++ b/reviews/function_4_modified.md
+@@ -0,0 +1,103 @@
++As an experienced code reviewer, I've analyzed the provided Python function `get_chroma_collection`.
++
++**Overall Summary:**
++The provided function `get_chroma_collection` is **critically incomplete**, making it syntactically incorrect and functionally useless in its current state. This is the primary issue that must be addressed first. Beyond this, it also violates several of the specified coding standards (Documentation, Type Hints) and exhibits areas for improvement in clarity, efficiency, and maintainability.
++
++---
++
++### Detailed Review
++
++**1. Correctness (Critical Issue)**
++*   **Issue:** The code is syntactically incomplete. The line `ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2"` is missing a closing parenthesis or further arguments, which will lead to a `SyntaxError` or `IndentationError`.
++*   **Issue:** Even if the `ef` line were completed, the `client` and `ef` variables are local to the function and are not used or returned. This means the function, as written, does nothing useful. The name `get_chroma_collection` implies it should return a collection, but no such operation or return statement exists.
++*   **Recommendation:** Complete the function body to make it syntactically correct and ensure that the initialized `client` and `ef` are either used to create/retrieve a collection, or returned, or handled appropriately based on the function's actual goal.
++
++**2. Clarity**
++*   **Issue:** The function name `get_chroma_collection` suggests it should *return* a ChromaDB collection object. However, the provided code does not return anything related to a collection.
++*   **Recommendation:** Once the function's purpose is fully defined, ensure the function's name accurately reflects its behavior and return value (e.g., `initialize_chroma_client_and_embeddings`, `get_or_create_collection`).
++
++**3. Efficiency**
++*   **Potential Issue:** Initializing `chromadb.PersistentClient` and `embedding_functions.SentenceTransformerEmbeddingFunction` on every call to this function might be inefficient if these objects are intended to be long-lived or shared across multiple operations.
++*   **Recommendation:** Consider if the client and embedding function should be initialized once (e.g., as a global variable, within a class, or passed as parameters) and reused, rather than recreated on each call. This depends on the application's architecture and how frequently this function is expected to be called.
++
++**4. Security**
++*   No immediate security concerns are apparent in this small, incomplete snippet. The `path="./chroma_db"` refers to a local file path.
++
++**5. Maintainability**
++*   **Issue:** The "magic string" `"all-MiniLM-L6-v2"` for the model name is hardcoded. If this model name changes or needs to be configurable, it would require modifying the function directly.
++*   **Recommendation:** Consider defining such strings as constants at a module level or making them configurable parameters for the function.
++
++**6. Python Best Practices**
++*   **Issue:** The function name implies a return value, but none is present. This violates the principle of least surprise.
++*   **Recommendation:** Ensure function names are descriptive and accurately reflect their actions and return values.
++
++---
++
++### Adherence to Retrieved Coding Standards
++
++**1. Documentation**
++*   **Violation:** The function is missing a docstring.
++*   **Recommendation:** Add a comprehensive docstring explaining the function's purpose, any parameters it might take, what it returns, and any exceptions it might raise.
++
++    ```python
++    # Example of a docstring (assuming the function is completed to return a collection)
++    import chromadb
++    from chromadb.utils import embedding_functions
++    # from chromadb.api.models.Collection import Collection # You might need this specific import
++
++    def get_chroma_collection():
++        """Initializes a ChromaDB client and embedding function, then retrieves/creates a collection.
++
++        This function sets up a persistent ChromaDB client at the specified path
++        and configures a SentenceTransformer embedding function. It then uses
++        these to interact with a ChromaDB collection.
++
++        Args:
++            # Add parameters here if the function were to take any, e.g., collection_name, path
++            # collection_name (str): The name of the collection to retrieve or create.
++
++        Returns:
++            # Replace with the actual return type once decided, e.g., chromadb.api.models.Collection.Collection
++            Any: The ChromaDB collection object, or None if the function's purpose changes.
++
++        Raises:
++            # Mention any exceptions, e.g., if collection creation fails
++        """
++        # ... rest of the code
++    ```
++
++**2. PEP 8**
++*   **Partial Compliance:**
++    *   Variable names (`client`, `ef`) are snake_case.
++    *   Indentation appears to be 4 spaces (though hard to fully confirm with incomplete code).
++*   **Recommendation:** Ensure all lines adhere to the 79-character limit (not an issue in the current snippet but important for future additions). Add blank lines as appropriate between logical blocks of code within the function (once it's complete).
++
++**3. Type Hints**
++*   **Violation:** No type hints are used for parameters or the return type.
++*   **Recommendation:** Add type hints for all function parameters and the return type to improve code clarity and IDE support.
++
++    ```python
++    # Example of type hints (assuming the function is completed to return a collection)
++    import chromadb
++    from chromadb.utils import embedding_functions
++    from chromadb.api.models.Collection import Collection # Assuming this is the correct type
++
++    def get_chroma_collection() -> Collection: # Add type hint for return value
++        client: chromadb.PersistentClient = chromadb.PersistentClient(path="./chroma_db")
++        ef: embedding_functions.SentenceTransformerEmbeddingFunction = embedding_functions.SentenceTransformerEmbeddingFunction(
++            model_name="all-MiniLM-L6-v2"
++        )
++        # ... complete the function, e.g., return client.get_or_create_collection("my_collection", embedding_function=ef)
++        # return client.get_or_create_collection("my_collection", embedding_function=ef)
++    ```
++
++---
++
++### Final Actionable Steps:
++
++1.  **Complete the Function:** Address the syntax error and define the actual purpose and return value of the function.
++2.  **Add Docstring:** Write a comprehensive docstring explaining the function's purpose, parameters, return values, and any exceptions.
++3.  **Add Type Hints:** Include type annotations for all parameters and the return type.
++4.  **Refine Naming:** Ensure the function name accurately reflects its final behavior.
++5.  **Consider Efficiency:** Evaluate if `client` and `ef` should be initialized once or on every call.
++6.  **Use Constants:** For strings like `model_name`, consider using module-level constants.
+\ No newline at end of file
 diff --git a/src/__pycache__/llm_review.cpython-310.pyc b/src/__pycache__/llm_review.cpython-310.pyc
-index 3d5cab2..a736098 100644
+index a736098..665b5be 100644
 Binary files a/src/__pycache__/llm_review.cpython-310.pyc and b/src/__pycache__/llm_review.cpython-310.pyc differ
 diff --git a/src/__pycache__/standards.cpython-310.pyc b/src/__pycache__/standards.cpython-310.pyc
-index 4c5ce4f..b44943d 100644
+index b44943d..5811f4e 100644
 Binary files a/src/__pycache__/standards.cpython-310.pyc and b/src/__pycache__/standards.cpython-310.pyc differ
 diff --git a/src/chroma_db/chroma.sqlite3 b/src/chroma_db/chroma.sqlite3
-new file mode 100644
-index 0000000..eb63b70
-Binary files /dev/null and b/src/chroma_db/chroma.sqlite3 differ
+index eb63b70..402a36b 100644
+Binary files a/src/chroma_db/chroma.sqlite3 and b/src/chroma_db/chroma.sqlite3 differ
 diff --git a/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/data_level0.bin b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/data_level0.bin
-new file mode 100644
-index 0000000..2dbfeda
-Binary files /dev/null and b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/data_level0.bin differ
-diff --git a/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/header.bin b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/header.bin
-new file mode 100644
-index 0000000..bb54792
-Binary files /dev/null and b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/header.bin differ
+deleted file mode 100644
+index 2dbfeda..0000000
+Binary files a/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/data_level0.bin and /dev/null differ
 diff --git a/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/length.bin b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/length.bin
+deleted file mode 100644
+index 3f919fe..0000000
+Binary files a/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/length.bin and /dev/null differ
+diff --git a/src/chroma_db/ee5a3742-1452-4bbc-b7e5-21c48cc1e7fe/data_level0.bin b/src/chroma_db/ee5a3742-1452-4bbc-b7e5-21c48cc1e7fe/data_level0.bin
 new file mode 100644
-index 0000000..3f919fe
-Binary files /dev/null and b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/length.bin differ
-diff --git a/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/link_lists.bin b/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/link_lists.bin
+index 0000000..8d54c8b
+Binary files /dev/null and b/src/chroma_db/ee5a3742-1452-4bbc-b7e5-21c48cc1e7fe/data_level0.bin differ
+diff --git a/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/header.bin b/src/chroma_db/ee5a3742-1452-4bbc-b7e5-21c48cc1e7fe/header.bin
+similarity index 100%
+rename from src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/header.bin
+rename to src/chroma_db/ee5a3742-1452-4bbc-b7e5-21c48cc1e7fe/header.bin
+diff --git a/src/chroma_db/ee5a3742-1452-4bbc-b7e5-21c48cc1e7fe/length.bin b/src/chroma_db/ee5a3742-1452-4bbc-b7e5-21c48cc1e7fe/length.bin
 new file mode 100644
-index 0000000..e69de29
+index 0000000..55dced7
+Binary files /dev/null and b/src/chroma_db/ee5a3742-1452-4bbc-b7e5-21c48cc1e7fe/length.bin differ
+diff --git a/src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/link_lists.bin b/src/chroma_db/ee5a3742-1452-4bbc-b7e5-21c48cc1e7fe/link_lists.bin
+similarity index 100%
+rename from src/chroma_db/e0f30134-5a45-412c-9f10-4846e0fd4987/link_lists.bin
+rename to src/chroma_db/ee5a3742-1452-4bbc-b7e5-21c48cc1e7fe/link_lists.bin
 diff --git a/src/llm_review.py b/src/llm_review.py
-index 0a65b8c..e61b2bb 100644
+index e61b2bb..9e131da 100644
 --- a/src/llm_review.py
 +++ b/src/llm_review.py
-@@ -34,7 +34,7 @@ def review_code_diff(diff_text: str) -> str:
- {diff_text}
+@@ -1,40 +1,34 @@
+-import os
+-from google import genai
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_google_genai import ChatGoogleGenerativeAI
++from langchain_core.output_parsers import StrOutputParser
++from standards import retrieve_relevant_standards
+ from dotenv import load_dotenv
+-from  standards import retrieve_relevant_standards
++import os
+ 
+ load_dotenv()
+-client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
++llm = ChatGoogleGenerativeAI(
++    model="gemini-2.5-flash",
++    google_api_key=os.getenv("GOOGLE_API_KEY")
++)
+ 
+-def review_code_diff(diff_text: str) -> str:
+-    # RAG: retrieve relevant standards based on the function code
+-    relevant_standards = retrieve_relevant_standards(diff_text)
+-    
+-    prompt = f"""
+-You are an experienced code reviewer. Review the function below using the retrieved coding standards as context.
+-
+-**Retrieved Coding Standards (from knowledge base):**
+-{relevant_standards}
+-
+-**Review the function on these criteria:**
+-1. Clarity - variable names, comments, docstrings
+-2. Correctness - edge cases, type errors, empty inputs
+-3. Efficiency - time/space complexity, unnecessary operations
+-4. Security - input validation, injection risks
+-5. Maintainability - DRY principle, single responsibility
+-6. Python Best Practices - PEP 8, Pythonic patterns
+-
+-**Review Format:**
+-- Summary: what the function does
+-- Improvements: specific suggestions per criterion
+-- Possible Issues: bugs, security issues, performance bottlenecks
+-- Code Suggestions: improved version if applicable
++template = """
++You are an experienced code reviewer.
++
++**Retrieved Coding Standards:**
++{standards}
++
++**Review the function on clarity, correctness, efficiency, security, maintainability, and Python best practices.**
+ 
+ Function code:
+-{diff_text}
++{code}
  """
-     response = client.models.generate_content(
--        model="gemini-2.0-flash",
-+        model="gemini-2.5-flash",
-         contents=prompt
-     )
-     return response.text.strip()
+-    response = client.models.generate_content(
+-        model="gemini-2.5-flash",
+-        contents=prompt
+-    )
+-    return response.text.strip()
 \ No newline at end of file
-diff --git a/src/main.py b/src/main.py
-index edaf237..b3f18ee 100644
---- a/src/main.py
-+++ b/src/main.py
-@@ -4,7 +4,7 @@
- from llm_review import review_code_diff
- import os
- 
--reviewPATH = os.path.abspath(os.path.join(os.getcwd(), "..", "CodeSage/reviews/"))
-+reviewPATH = os.path.abspath(os.path.join(os.getcwd(), "..", "reviews/"))
- repo_url = "https://github.com/Chandresh-Gohel/codesage.git"
- branch = "main"
- 
++
++prompt = ChatPromptTemplate.from_template(template)
++
++# LCEL pipe operator — modern LangChain
++chain = prompt | llm | StrOutputParser()
++
++def review_code_diff(diff_text: str) -> str:
++    relevant_standards = retrieve_relevant_standards(diff_text)
++    response = chain.invoke({"standards": relevant_standards, "code": diff_text})
++    return response.strip()
+\ No newline at end of file
 diff --git a/src/standards.py b/src/standards.py
-index 089b566..4ee4ec2 100644
+index 4ee4ec2..e28fbd4 100644
 --- a/src/standards.py
 +++ b/src/standards.py
-@@ -2,7 +2,6 @@
- from chromadb.utils import embedding_functions
- 
- def get_chroma_collection():
--    not_usifng_lable_word_forcheck = list()
-     client = chromadb.PersistentClient(path="./chroma_db")
-     ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-         model_name="all-MiniLM-L6-v2"
+@@ -14,12 +14,18 @@ def get_chroma_collection():
+     # Only populate if empty
+     if collection.count() == 0:
+         standards = [
+-            {"id": "pep8", "text": "Follow PEP 8 guidelines: use 4 spaces for indentation, max 79 characters per line, use snake_case for variables and functions, use UPPER_CASE for constants."},
+-            {"id": "security", "text": "Security best practices: validate all user inputs, avoid SQL injection by using parameterized queries, never hardcode credentials, sanitize data before processing."},
+-            {"id": "efficiency", "text": "Efficiency guidelines: avoid nested loops when possible, use list comprehensions over manual loops, prefer built-in functions, be aware of time and space complexity."},
+-            {"id": "maintainability", "text": "Maintainability rules: follow DRY principle, keep functions small and single-purpose, use meaningful variable names, add docstrings to all functions."},
+-            {"id": "correctness", "text": "Correctness checks: handle edge cases like None, empty inputs, and type errors, write defensive code, validate function inputs and outputs."},
+-            {"id": "pythonic", "text": "Pythonic code: use context managers for file handling, use enumerate instead of range(len()), use zip for parallel iteration, prefer f-strings over concatenation."},
++            {"id": "pep8", "text": "PEP 8: use 4 spaces indentation, max 79 chars per line, snake_case for variables, blank lines between functions."},
++            {"id": "security_sql", "text": "SQL injection prevention: always use parameterized queries, never concatenate user input directly into SQL strings."},
++            {"id": "security_input", "text": "Input validation: validate and sanitize all user inputs, check data types, lengths, and ranges before processing."},
++            {"id": "efficiency_loops", "text": "Loop optimization: avoid nested loops O(n²), use list comprehensions, prefer built-in functions like map() and filter()."},
++            {"id": "efficiency_ds", "text": "Data structures: use sets for O(1) lookup instead of lists, use dictionaries for key-value pairs, avoid unnecessary copies."},
++            {"id": "maintainability_dry", "text": "DRY principle: avoid code duplication, extract repeated logic into helper functions, use constants for repeated values."},
++            {"id": "maintainability_solid", "text": "Single responsibility: each function should do one thing only, keep functions under 20 lines, split complex functions."},
++            {"id": "pythonic_context", "text": "Use context managers: always use 'with' statement for file operations and database connections to ensure proper cleanup."},
++            {"id": "pythonic_comprehension", "text": "List comprehensions: prefer [x for x in items if condition] over manual for loops with append for simple transformations."},
++            {"id": "error_handling", "text": "Error handling: use specific exception types not bare except, always handle exceptions gracefully, log errors properly."},
++            {"id": "docstrings", "text": "Documentation: every function must have a docstring explaining purpose, parameters, return values, and exceptions raised."},
++            {"id": "type_hints", "text": "Type hints: use Python type annotations for all function parameters and return types to improve code clarity and IDE support."},
+         ]
+         collection.add(
+             documents=[s["text"] for s in standards],
+@@ -27,12 +33,19 @@ def get_chroma_collection():
+         )
+     
+     return collection
+-
+-def retrieve_relevant_standards(code: str, n_results: int = 3) -> str:
++    
++def retrieve_relevant_standards(code: str, n_results: int = 3):
+     collection = get_chroma_collection()
+     results = collection.query(
+         query_texts=[code],
+-        n_results=n_results
++        n_results=n_results,
++        include=["documents", "distances"]
+     )
+-    retrieved = results["documents"][0]
+-    return "\n".join([f"- {doc}" for doc in retrieved])
+\ No newline at end of file
++    docs = results["documents"][0]
++    distances = results["distances"][0]
++    
++    # Log relevance
++    for doc, dist in zip(docs, distances):
++        print(f"Relevance score (lower=better): {dist:.4f} | {doc[:60]}...")
++    
++    return "\n".join([f"- {doc}" for doc in docs])
+\ No newline at end of file

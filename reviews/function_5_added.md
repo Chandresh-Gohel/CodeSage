@@ -1,131 +1,59 @@
-Okay, I'm ready to review the provided function.
+As an experienced code reviewer, I have evaluated the provided snippet. While it is a fragment, it reveals several areas for improvement regarding security, maintainability, and standard practices.
 
-**Summary**
+### Observations & Recommendations
 
-The function `review_code_diff` takes a string `diff_text` as input, representing a code difference. It then constructs a prompt by prepending instructions for a code review to the `diff_text`. Finally, it uses a `model` (presumably a machine learning model) to generate content based on the prompt and returns the generated text after stripping leading/trailing whitespace.
+#### 1. Security: Prompt Injection Risk
+The function directly embeds `diff_text` into a prompt string. If `diff_text` comes from an untrusted source (like a PR description or a malicious commit message), this is vulnerable to **prompt injection**. 
+*   **Recommendation:** Use a templating system or structured prompt approach. If you must use f-strings, ensure the input is sanitized or use an instruction-based system prompt where the model is explicitly told to treat the content as data, not instructions.
 
-**Improvements**
+#### 2. Maintainability: Hardcoded Prompts
+The prompt is defined as a multiline string within the function. This makes it difficult to test, version-control, or update without touching the business logic.
+*   **Recommendation:** Move the prompt template to a constant outside the function or load it from an external file/configuration.
 
-1.  **Clarity**:
+#### 3. PEP 8 & Consistency
+*   **Line Length:** Ensure the multiline string and the `client.models.generate_content` call do not exceed the 79-character limit.
+*   **Type Hinting:** You are correctly using type hints (`str` -> `str`), which is excellent.
 
-    *   The prompt is well-written and explains the task clearly.
-    *   The variable names are descriptive.
-    *   However, there's no docstring for the function itself, which would be beneficial.
+---
 
-2.  **Correctness**:
+### Refactored Suggestion
 
-    *   The function seems to correctly construct the prompt.
-    *   The correctness of the function heavily relies on the `model` it calls.  Without knowing what `model` is or its expected behavior, it's impossible to assess correctness fully.
-    *   **Edge Cases**: What happens if `diff_text` is an empty string? The prompt will still be constructed, but the model's output might be unpredictable. Consider adding a check for empty `diff_text`.
-    *   No test cases provided. Testing is crucial here, especially to see how different inputs affect the prompt and the final response.
-
-3.  **Efficiency**:
-
-    *   String concatenation is generally efficient in Python.
-    *   The efficiency largely depends on the `model.generate_content` function.  If this involves a large model or a computationally expensive process, that would be the primary bottleneck.  Without more details, it's hard to assess.
-
-4.  **Security**:
-
-    *   The function itself doesn't appear to introduce any direct security vulnerabilities (e.g., SQL injection).
-    *   **Indirect Security Risk**:  If the `model` is being used in a production environment and is accessible to users who can control the `diff_text`, prompt injection attacks are possible. Users could craft `diff_text` that manipulates the model's behavior or extracts sensitive information. Input validation or sanitization *before* constructing the prompt and feeding it to the model is *essential*.  A naive example would be filtering out or escaping characters frequently used in prompt injection attacks.
-
-5.  **Maintainability**:
-
-    *   The function is relatively simple and maintainable.
-    *   If the prompt becomes significantly more complex, consider moving it to a separate constant or even a configuration file. This would improve readability and make it easier to modify the prompt without altering the core function logic.
-
-6.  **Python Best Practices**:
-
-    *   The code follows PEP 8 guidelines.
-    *   The use of f-strings for prompt creation would be more readable.
-    *   The function uses `strip()` effectively to remove whitespace.
-
-**Possible Issues**
-
-*   **Missing Docstring**: Lack of a docstring explaining the function's purpose, arguments, and return value.
-*   **Untested Code**: No test cases provided, making it difficult to verify correctness, especially with varying `diff_text` inputs.
-*   **Potential Prompt Injection**:  If the `model` is accessible via user-provided input, the function is vulnerable to prompt injection attacks.
-*   **Uncertainty about `model`**: The behavior and performance characteristics of the function are heavily dependent on the `model` object, which is not defined.
-
-**Code Suggestions**
+Here is how I would structure this to adhere to your coding standards and improve maintainability:
 
 ```python
+from typing import Final
+
+# Define constants to improve maintainability and follow DRY
+PROMPT_TEMPLATE: Final[str] = (
+    "Analyze the following code diff for bugs, style, and security issues:\n\n"
+    "{diff_text}"
+)
+
 def review_code_diff(diff_text: str) -> str:
     """
-    Reviews a code diff using a machine learning model.
-
+    Sends a code diff to the AI model for analysis.
+    
     Args:
-        diff_text: The code diff as a string.
-
+        diff_text: The git diff string to be analyzed.
+        
     Returns:
-        The review generated by the model as a string, with leading/trailing whitespace removed.
+        The model's review summary.
     """
-
-    if not diff_text:
-        return "No code diff provided."  # Or raise an exception, depending on desired behavior
-
-    prompt = f"""
-    You are an experienced code reviewer. Your task is to thoroughly review the function provided below. 
-    Please evaluate the function on the following criteria:
-
-    1. **Clarity**:
-    - Is the code easy to understand?
-    - Are the variable names clear and descriptive?
-    - Does the function include helpful comments or docstrings?
-
-    2. **Correctness**:
-    - Does the function perform the intended task correctly?
-    - Are there edge cases that need to be handled (e.g., null values, type errors, empty inputs)?
-    - Is the function well-tested or does it have test cases provided?
-
-    3. **Efficiency**:
-    - Is the code optimized for performance?
-    - Are there any unnecessary calculations or data structures that could be simplified?
-    - Could the function be more efficient in terms of time or space complexity?
-
-    4. **Security**:
-    - Does the function introduce any security risks (e.g., SQL injection, unsafe handling of user input)?
-    - Is input validation properly implemented to prevent malicious input?
-
-    5. **Maintainability**:
-    - Is the code easy to maintain and extend?
-    - Does the function follow the DRY (Don't Repeat Yourself) principle?
-    - Could the function be refactored to improve readability or reduce complexity?
-
-    6. **Python Best Practices**:
-    - Does the code follow **PEP 8** guidelines for Python code style?
-    - Are there any Pythonic improvements (e.g., list comprehensions, context managers)?
-    - Are standard libraries used effectively where applicable?
-
-    **Review Format**:
-    - **Summary**: Briefly describe what the function does.
-    - **Improvements**: Suggest specific improvements for each of the above criteria.
-    - **Possible Issues**: Highlight any potential bugs, security issues, or performance bottlenecks.
-    - **Code Suggestions**: If possible, provide an improved version of the code with suggested changes.
-
-    Function code:
-    {diff_text}
-    """
-
-    # Consider adding input validation/sanitization here to mitigate prompt injection.
-    # Example:  diff_text = escape_prompt_injection(diff_text)
-
-    response = model.generate_content(prompt)
-    return response.text.strip()
-
-
-# Example usage (assuming 'model' is defined elsewhere)
-# code_diff = "def add(a, b):\n  return a + b"
-# review = review_code_diff(code_diff)
-# print(review)
+    # Use formatted prompt; consider adding system instructions 
+    # if the API supports it to mitigate prompt injection.
+    prompt: str = PROMPT_TEMPLATE.format(diff_text=diff_text)
+    
+    response = client.models.generate_content(
+        contents=prompt
+    )
+    
+    return str(response.text)
 ```
 
-**Key Changes in the Suggestion:**
+### Key Improvements Made:
+1.  **Constant Extraction:** Moved the prompt string to a `Final` constant. This keeps the function body clean and allows for easier prompt tuning.
+2.  **Docstrings:** Added a PEP 257-compliant docstring to improve readability.
+3.  **Naming:** Used a clear variable name (`prompt`) before passing it to the API, which aids debugging (you can now print/log the prompt easily before it is sent).
+4.  **Formatting:** Ensured the code structure is clean and conforms to the requested 4-space indentation and 79-character width.
 
-*   **Docstring:** Added a docstring to explain the function's purpose and parameters.
-*   **Empty Input Handling:** Added a check for empty `diff_text` and returns a message if it's empty. This avoids potential issues with the model.
-*   **f-string:** Changed string concatenation to an f-string for better readability.
-*   **Prompt Injection Mitigation:**  Added a comment emphasizing the need for input validation and sanitization to prevent prompt injection attacks.  A placeholder `escape_prompt_injection` function is included as an example of the type of operation needed.  *The specific implementation of the escaping would need to be carefully considered based on the model being used.*
-*   **Example Usage:** Included an example of how the function might be used, clarifying its intended purpose.
-
-This improved version addresses several of the identified issues and provides a more robust and secure foundation for code review.  Remember that proper testing and prompt injection mitigation are essential for production use.
+**One final note:** Ensure that your `client` object is either passed as an argument (Dependency Injection) or instantiated outside the scope of this function to keep the function pure and unit-testable.
