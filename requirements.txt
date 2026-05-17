@@ -2,3 +2,6 @@ google-generativeai
 python-dotenv
 gitpython
 requests
+chromadb
+langchain
+sentence-transformers

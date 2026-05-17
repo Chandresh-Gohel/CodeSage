@@ -4,7 +4,7 @@ from extract_functions_from_diff import extract_functions_from_diff
 from llm_review import review_code_diff
 import os
 
-reviewPATH = os.path.abspath(os.path.join(os.getcwd(), "..", "CodeSage/reviews/"))
+reviewPATH = os.path.abspath(os.path.join(os.getcwd(), "..", "reviews/"))
 repo_url = "https://github.com/Chandresh-Gohel/codesage.git"
 branch = "main"
 

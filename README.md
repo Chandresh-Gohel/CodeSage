@@ -93,6 +93,9 @@ In this example:
 * The review process currently only analyzes the most recent commit.
 * If the most recent commit doesn't contain any function changes, no reviews will be generated.
 * The review files are saved in the `reviews/` directory.
+* Standards are stored as embeddings in ChromaDB
+* Function code is used as query to retrieve relevant standards
+* Retrieved standards are injected into the Gemini prompt
 
 ## Project Structure
 
