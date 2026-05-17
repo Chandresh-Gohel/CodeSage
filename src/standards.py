@@ -2,6 +2,7 @@ import chromadb
 from chromadb.utils import embedding_functions
 
 def get_chroma_collection():
+    not_usifng_lable_word_forcheck = list()
     client = chromadb.PersistentClient(path="./chroma_db")
     ef = embedding_functions.SentenceTransformerEmbeddingFunction(
         model_name="all-MiniLM-L6-v2"
