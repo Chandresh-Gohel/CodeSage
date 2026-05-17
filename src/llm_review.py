@@ -1,40 +1,34 @@
-import os
-from google import genai
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.output_parsers import StrOutputParser
+from standards import retrieve_relevant_standards
 from dotenv import load_dotenv
-from  standards import retrieve_relevant_standards
+import os
 
 load_dotenv()
-client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+llm = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash",
+    google_api_key=os.getenv("GOOGLE_API_KEY")
+)
 
-def review_code_diff(diff_text: str) -> str:
-    # RAG: retrieve relevant standards based on the function code
-    relevant_standards = retrieve_relevant_standards(diff_text)
-    
-    prompt = f"""
-You are an experienced code reviewer. Review the function below using the retrieved coding standards as context.
+template = """
+You are an experienced code reviewer.
 
-**Retrieved Coding Standards (from knowledge base):**
-{relevant_standards}
+**Retrieved Coding Standards:**
+{standards}
 
-**Review the function on these criteria:**
-1. Clarity - variable names, comments, docstrings
-2. Correctness - edge cases, type errors, empty inputs
-3. Efficiency - time/space complexity, unnecessary operations
-4. Security - input validation, injection risks
-5. Maintainability - DRY principle, single responsibility
-6. Python Best Practices - PEP 8, Pythonic patterns
-
-**Review Format:**
-- Summary: what the function does
-- Improvements: specific suggestions per criterion
-- Possible Issues: bugs, security issues, performance bottlenecks
-- Code Suggestions: improved version if applicable
+**Review the function on clarity, correctness, efficiency, security, maintainability, and Python best practices.**
 
 Function code:
-{diff_text}
+{code}
 """
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt
-    )
-    return response.text.strip()
+
+prompt = ChatPromptTemplate.from_template(template)
+
+# LCEL pipe operator — modern LangChain
+chain = prompt | llm | StrOutputParser()
+
+def review_code_diff(diff_text: str) -> str:
+    relevant_standards = retrieve_relevant_standards(diff_text)
+    response = chain.invoke({"standards": relevant_standards, "code": diff_text})
+    return response.strip()
