@@ -2,6 +2,23 @@
 
 CodeSage is an AI-powered code review system that leverages Google’s Gemini API to provide detailed code reviews for Python functions. It automatically extracts code diffs from Git repositories, reviews each function, and offers feedback on various aspects of the code, including clarity, correctness, efficiency, security, maintainability, and Python best practices.
 
+# CodeSage 🔍
+> Agentic LLM-powered code review using RAG + LangChain + Gemini
+
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![LangChain](https://img.shields.io/badge/LangChain-LCEL-green)
+![Gemini](https://img.shields.io/badge/Gemini-3.1Flash-orange)
+![ChromaDB](https://img.shields.io/badge/ChromaDB-VectorDB-purple)
+
+## Results
+- **Recall@3 = 0.78** on custom evaluation suite
+- MMR retrieval (lambda=0.7) for relevance + diversity
+- 12 coding standards: PEP8, security, efficiency, maintainability
+
+## Architecture
+Git Diff → Function Extraction → ChromaDB RAG (MMR) 
+→ LangChain LCEL Pipeline → Gemini → Structured Review
+
 ## Features
 
 * **Git Diff Extraction**: Automatically fetches code changes from a Git repository.
@@ -13,7 +30,7 @@ CodeSage is an AI-powered code review system that leverages Google’s Gemini AP
 
 ### Prerequisites
 
-* Python 3.x
+* Python 3.10
 * Google Cloud account (for accessing the Gemini API)
 * GitHub repository access
 * `git` command line tool
